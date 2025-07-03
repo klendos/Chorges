@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mes Vacances - Chorges, La Clusaz & Génolhac</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <style>
+        /* Styles de base */
+        body {
+            font-family: 'Open Sans', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f7f6;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        header {
+            background-color: #2c3e50;
+            color: #fff;
+            padding: 20px 0;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba="0, 0, 0, 0.1";
+        }
+
+        header h1 {
+            font-family: 'Playfair Display', serif;
+            margin: 0;
+            font-size: 2.5em;
+        }
+
+        nav {
+            background-color: #34495e;
+            padding: 10px 0;
+            text-align: center;
+        }
+
+        nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex; /* Pour les grands écrans */
+            justify-content: center;
+            flex-wrap: wrap; /* Permet aux éléments de passer à la ligne */
+        }
+
+        nav ul li {
+            margin: 0 15px;
+        }
+
+        nav ul li a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: bold;
+            padding: 5px 10px;
+            transition: background-color 0.3s ease;
+        }
+
+        nav ul li a:hover {
+            background-color: #5d6d7e;
+            border-radius: 5px;
+        }
+
+        .menu-toggle {
+            display: none; /* Masqué par défaut sur les grands écrans */
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 1.8em;
+            cursor: pointer;
+            padding: 10px 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+
+        .day-section, .list-section, .travel-section {
+            background-color: #fff;
+            margin-bottom: 25px;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba="0, 0, 0, 0.05";
+        }
+
+        /* Styles pour les titres cliquables */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            border-bottom: 2px solid #a8dadc;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+
+        .section-header h2 {
+            font-family: 'Playfair Display', serif;
+            margin: 0;
+            font-size: 1.8em;
+            flex-grow: 1; /* Pour que le titre prenne de la place */
+        }
+
+        .toggle-icon {
+            font-size: 1.8em;
+            font-weight: bold;
+            line-height: 1;
+            margin-left: 10px;
+            transition: transform 0.3s ease;
+        }
+
+        .section-content {
+            overflow: hidden;
+            max-height: 1000px; /* Grande valeur pour simuler 'auto' */
+            transition: max-height 0.5s ease-out, opacity 0.5s ease-out;
+            opacity: 1;
+        }
+
+        .section-content.collapsed {
+            max-height: 0;
+            opacity: 0;
+            padding-top: 0;
+            padding-bottom: 0;
+            margin-bottom: 0;
+        }
+        
+        /* Ajustements pour les images dans les sections réductibles */
+        .day-section img {
+            width:100%; 
+            max-width:600px; 
+            height:auto; 
+            margin-top:15px; 
+            border-radius: 8px;
+            display: block; /* S'assure que l'image est un bloc pour les marges auto */
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+
+        .activity-list, .clothing-list, .equipment-list, .todo-list, .travel-details {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .activity-list li, .clothing-list li, .equipment-list li, .todo-list li, .travel-details li {
+            margin-bottom: 15px;
+            padding-left: 25px;
+            position: relative;
+        }
+
+        .activity-list li::before, .clothing-list li::before, .equipment-list li::before, .todo-list li::before, .travel-details li::before {
+            content: '•';
+            color: #457b9d;
+            font-size: 1.5em;
+            position: absolute;
+            left: 0;
+            top: -2px;
+        }
+        .clothing-list li::before {
+            content: '👕'; /* Ou '📦' ou '✔️' */
+            font-size: 1em;
+            top: 2px;
+            color: #333; /* Pour que l'emoji soit coloré par défaut */
+        }
+        .equipment-list li::before {
+             content: '🎒';
+             font-size: 1em;
+             top: 2px;
+        }
+        .todo-list li::before {
+            content: '☐'; /* Case à cocher vide */
+            font-size: 1.2em;
+            top: 0px;
+        }
+        .todo-list input[type="checkbox"] {
+            margin-right: 10px;
+            transform: scale(1.2);
+            position: absolute;
+            left: 0;
+            top: 0px;
+            cursor: pointer;
+        }
+        /* Cache le • par défaut pour la to-do list si on utilise la checkbox */
+        .todo-list li {
+            padding-left: 35px; /* Pour laisser de la place à la checkbox */
+        }
+        .todo-list li::before {
+            content: none; /* Supprime le • par défaut */
+        }
+
+        .travel-details li::before {
+            content: '🚗'; /* Emoji voiture pour les trajets */
+            font-size: 1em;
+            top: 2px;
+        }
+
+
+        .activity-list li strong, .clothing-list li strong, .equipment-list li strong, .todo-list li strong, .travel-details li strong {
+            color: #457b9d;
+        }
+
+        .note {
+            background-color: #e0f2f7;
+            border-left: 5px solid #a8dadc;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 4px;
+            font-style: italic;
+            color: #555;
+        }
+
+        /* Styles pour les boutons "tout déplier/replier" */
+        .toggle-all-buttons {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .toggle-all-buttons button {
+            background-color: #457b9d;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            margin: 0 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s ease;
+        }
+        .toggle-all-buttons button:hover {
+            background-color: #2c3e50;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            margin-top: 30px;
+            background-color: #2c3e50;
+            color: #fff;
+            font-size: 0.9em;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2em;
+            }
+
+            nav ul {
+                flex-direction: column; /* Les liens s'empilent */
+                display: none; /* Masqué par défaut sur les petits écrans */
+                width: 100%;
+                text-align: left;
+            }
+
+            nav ul.active {
+                display: flex; /* Affiché quand le menu est actif */
+            }
+
+            nav ul li {
+                margin: 0;
+                border-bottom: 1px solid #4a6279;
+            }
+
+            nav ul li:last-child {
+                border-bottom: none;
+            }
+
+            nav ul li a {
+                display: block;
+                padding: 10px 20px;
+            }
+
+            .menu-toggle {
+                display: block; /* Affiché sur les petits écrans */
+                text-align: right;
+            }
+
+            .container {
+                margin: 10px auto;
+                padding: 0 15px;
+            }
+
+            .day-section, .list-section, .travel-section {
+                padding: 15px;
+            }
+
+            .section-header h2 {
+                font-size: 1.5em;
+            }
+
+            .activity-list li, .clothing-list li, .equipment-list li, .todo-list li, .travel-details li {
+                padding-left: 20px;
+            }
+             .todo-list li {
+                padding-left: 30px; /* Ajustement pour la checkbox mobile */
+            }
+            .toggle-all-buttons button {
+                width: calc(50% - 20px); /* Pour deux boutons sur une ligne, avec un peu d'espace */
+                margin: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Mes Vacances - Chorges, La Clusaz & Génolhac</h1>
+        <p>Du 09 août au 31 août 2025</p>
+    </header>
+
+    <nav>
+        <button class="menu-toggle" aria-label="Toggle navigation">&#9776;</button>
+        <ul id="main-nav">
+            <li><a href="#chorges">Chorges</a></li>
+            <li><a href="#laclusaz">La Clusaz</a></li>
+            <li><a href="#genolhac">Génolhac</a></li>
+            <li><a href="#vetements">Vêtements</a></li>
+            <li><a href="#equipement">Équipement</a></li>
+            <li><a href="#todo">Boîte à To-Do</a></li>
+            <li><a href="#trajets">Infos Trajets</a></li>
+            <li><a href="#conseils">Conseils</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+
+        <div class="toggle-all-buttons">
+            <button id="expandAll">Tout déplier</button>
+            <button id="collapseAll">Tout replier</button>
+        </div>
+
+        <h1 id="chorges" style="text-align: center; font-family: 'Playfair Display', serif; color: #2c3e50; margin-top: 30px; border-bottom: 2px solid #a8dadc; padding-bottom: 10px;">Semaine 1 : Chorges</h1>
+
+        <section class="day-section" id="jour1">
+            <div class="section-header">
+                <h2>Jour 1 : Samedi 9 août - Arrivée et découverte de Chorges</h2>
+                <span class="toggle-icon">+</span>
+            </div>
+            <div class="section-content">
+                <ul class="activity-list">
+                    <li><strong>Matin/Après-midi :</strong> Arrivée et installation à votre hébergement.</li>
+                    <li><strong>Fin d'après-midi :</strong> Promenade découverte dans le **centre de Chorges**, visitez l'**église Saint-Victor**.</li>
+                    <img src="http://googleusercontent.com/image_generation_content/3" alt="Centre de Chorges avec l'église Saint-Victor" style="width:100%; max-width:600px; height:auto; margin-top:15px; border-radius: 8px;">
+                    <li><strong>Soir :</strong> Dîner à **La Table de Chorges** (cuisine locale et ambiance chaleureuse).</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="day-section" id="jour2">
+            <div class="section-header">
+                <h2>Jour 2 : Dimanche 10 août - Lac de Serre-Ponçon et activités nautiques</h2>
+                <span class="toggle-icon">+</span>
+            </div>
+            <div class="section-content">
+                <ul class="activity-list">
+                    <li><strong>Matin :</strong> Profitez des **plages du lac de Serre-Ponçon** (plage des Pommiers ou des Tremouilles, par exemple). Possibilité de louer un pédalo, un paddle ou de faire du canoë.</li>
+                    <li><strong>Midi :</strong> Pique-nique au bord du lac ou déjeuner dans une **paillote** (vérifiez l'ouverture pour l'été 2025).</li>
+                    <li><strong>Après-midi :</strong> Baignade et farniente, ou initiation au **kitesurf** / **windsurf** pour les plus aventureux.</li>
+                    <li><strong>Soir :</strong> Dîner au **Restaurant Le Baron** à Chorges (bonne réputation pour sa cuisine traditionnelle).</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="day-section" id="jour3">
+            <div class="section-header">
+                <h2>Jour 3 : Lundi 11 août - Randonnée et panoramas</h2>
+                <span class="toggle-icon">+</span>
+            </div>
+            <div class="section-content">
+                <ul class="activity-list">
+                    <li><strong>Matin :</strong> Randonnée vers le **Pic de Morgon** (plusieurs niveaux de difficulté, des vues imprenables sur le lac). Prévoyez de bonnes chaussures et de l'eau.</li>
+                    <li><strong>Midi :</strong> Pique-nique en altitude pour profiter du panorama.</li>
+                    <li><strong>Après-midi :</strong> Détente et récupération à votre hébergement.</li>
+                    <li><strong>Soir :</strong> Dîner à **L'Auberge de l'Ange** (cuisine de terroir, pensez à réserver).</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="day-section" id="jour4">
+            <div class="section-header">
+                <h2>Jour 4 : Mardi 12 août - Patrimoine et saveurs locales</h2>
+                <span class="toggle-icon">+</span>
+            </div>
+            <div class="section-content">
+                <ul class="activity-list">
+                    <li><strong>Matin :</strong> Visite du **Barrage de Serre-Ponçon** (possibilité de visiter la maison du lac pour en apprendre plus sur sa construction).</li>
+                    <li><strong>Midi :</strong> Déjeuner à **Embrun**, ville voisine pleine de charme. Le **Restaurant La Cabane** pourrait être une option sympa.</li>
+                    <li><strong>Après-midi :</strong> Flânerie dans les rues d'Embrun, visite de la **Cathédrale Notre-Dame du Réal**.</li>
+                    <li><strong>Soir :</strong> Dégustation de produits locaux au **marché de Chorges** (si un marché nocturne a lieu ce soir-là, à vérifier) ou dîner à **La Crêperie des Lacs**.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="day-section" id="jour5">
+            <div class="section-header">
+                <h2>Jour 5 : Mercredi 13 août - Activités en eau vive ou accrobranche</h2>
+                <span class="toggle-icon">+</span>
+            </div>
+            <div class="section-content">
+                <ul class="activity-list">
+                    <li><strong>Matin :</strong> Choisissez votre activité !
+                        <ul>
+                            <li><strong>Option 1 :</strong> **Rafting** ou **canyoning** dans les rivières environnantes (avec un guide professionnel).</li>
+                            <li><strong>Option 2 :</strong> Parcours **accrobranche** à proximité, comme le Serre-Ponçon Aventure.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Midi :</strong> Déjeuner sur le pouce près de l'activité choisie.</li>
+                    <li><strong>Après-midi :</strong> Détente ou baignade.</li>
+                    <li><strong>Soir :</strong> Dîner au **Restaurant Le Clos des Vignes** (si vous cherchez une option un peu plus raffinée).</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="day-section" id="jour6">
+            <div class="section-header">
+                <h2>Jour 6 : Jeudi 14 août - Évasion en montagne et artisanat</h2>
+                <span class="toggle-icon">+</span>
+            </div>
+            <div class="section-content">
+                <ul class="activity-list">
+                    <li><strong>Matin :</strong> Excursion vers la **vallée de Champoléon** ou le **Parc national des Écrins**. Possibilité de faire une randonnée plus facile, par exemple vers le **lac des Sirènes**.</li>
+                    <li><strong>Midi :</strong> Pique-nique ou déjeuner dans une auberge de montagne (vérifiez les options sur place).</li>
+                    <li><strong>Après-midi :</strong> Visite d'un village de montagne typique comme **Réallon** ou **Crévoux**, découverte de l'artisanat local.</li>
+                    <li><strong>Soir :</strong> Dîner à **L'Estaminet** à Chorges (bonne ambiance et cuisine simple).</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="day-section" id="jour7">
+            <div class="section-header">
+                <h2>Jour 7 : Vendredi 15 août - Journée libre et feu d'artifice</h2>
+                <span class="toggle-icon">+</span>
+            </div>
+            <div class="section-content">
+                <ul class="activity-list">
+                    <li><strong>Journée :</strong> Journée libre pour faire ce que vous n'avez pas eu le temps de faire :
+                        <ul>
+                            <li>Retour à votre endroit préféré du lac.</li>
+                            <li>Visite d'un village que vous n'avez pas vu.</li>
+                            <li>Faire du vélo le long du lac.</li>
+                            <li>Achats de souvenirs.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Soir :</strong> Dîner au restaurant de votre choix. Pour le 15 août, de nombreuses communes autour du lac de Serre-Ponçon organisent des **feux d'artifice**. Renseignez-vous sur les lieux et horaires pour profiter du spectacle !</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="day-section" id="jour8">
+            <div class="section-header">
+                <h2>Jour 8 : Samedi 16 août - Route vers La Clusaz et installation</h2>
+                <span class="toggle-icon">+</span>
+            </div>
+            <div class="section-content">
+                <ul class="activity-list">
+                    <li><strong>Matin :</strong> Petit-déjeuner et départ de Chorges.</li>
+                    <li><strong>Midi :</strong> Déjeuner en route (voir section Trajets).</li>
+                    <li><strong>Après-midi :</strong> Arrivée à **La Clusaz**, installation à votre hébergement.</li>
+                    <li><strong>Fin d'après-midi :</strong> Première promenade dans le centre du village pour vous imprégner de l'ambiance montagnarde.</li>
+                    <li><strong>Soir :</strong> Dîner au **Restaurant La Scierie** (cuisine locale revisitée dans un cadre charmant).</li>
+                </ul>
+            </div>
+        </section>
+
+        ---
+
+        <h1 id="laclusaz" style="text-align: center; font-family: 'Playfair Display', serif; color: #2c3e50; margin-top: 30px; border-bottom: 2px solid #a8dadc; padding-bottom: 10px;">Semaine 2 : La Clusaz</h1>
+
+        <section class="day-section" id="jour9">
+            <div class="section-header">
+                <h2>Jour 9 : Dimanche 17 août - Découverte de La Clusaz et rando facile</h2>
+                <span class="toggle-icon">+</span>
+            </div>
+            <div class="section-content">
+                <ul class="activity-list">
+                    <li><strong>Matin :</strong> Ascension en télécabine du **Beauregard** pour une vue panoramique sur la station et les montagnes environnantes. Petite randonnée facile sur le plateau.</li>
+                    <li><strong>Midi :</strong> Déjeuner en altitude dans un chalet d'alpage (ex: **Chalet de Balme** si accessible, ou autre restaurant d'altitude).</li>
+                    <li><strong>Après-midi :</strong> Balade le long du **Torrent du Nom** ou visite de la **Maison du Patrimoine** pour découvrir l'histoire du village.</li>
+                    <li><strong>Soir :</strong> Dîner à **L'Ou'Vraille** (spécialités savoyardes authentiques).</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="day-section" id="jour10">
+            <div class="section-header">
+                <h2>Jour 10 : Lundi 18 août - Grand Bornand & produits locaux</h2>
+                <span class="toggle-icon">+</span>
+            </div>
+            <div class="section-content">
+                <ul class="activity-list">
+                    <li><strong>Matin :</strong> Départ pour le village voisin du **Grand-Bornand**. Flânerie dans le village classé, célèbre pour ses chalets.</li>
+                    <li><strong>Midi :</strong> Déjeuner au Grand-Bornand.</li>
+                    <li><strong>Après-midi :</strong> Visite d'une **ferme d'alpage** pour assister à la fabrication du Reblochon (possible d'acheter sur place). De nombreuses fermes proposent des visites, comme la **Ferme des Corbassières**.</li>
+                    <li><strong>Soir :</strong> Dîner à La Clusaz, peut-être au **Chalet du Lac** (pour une ambiance cosy).</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="day-section" id="jour11">
+            <div class="section-header">
+                <h2>Jour 11 : Mardi 19 août - Lac d'Annecy et Ville d'Annecy</h2>
+                <span class="toggle-icon">+</span>
+            </div>
+            <div class="section-content">
+                <ul class="activity-list">
+                    <li><strong>Journée complète :</strong> Excursion à **Annecy** (environ 45 min de route).
+                        <ul>
+                            <li>**Matin :** Balade dans la **Vieille Ville** d'Annecy, surnommée la "Venise des Alpes", ses canaux, son Palais de l'Isle.</li>
+                            <li>**Midi :** Déjeuner à Annecy.</li>
+                            <li>**Après-midi :** Activités sur le **Lac d'Annecy** : baignade sur l'une des plages (ex: Plage des Marquisats), location de pédalo/paddle, ou tour en bateau.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Soir :</strong> Retour à La Clusaz. Dîner au **K2 Restaurant** (ambiance moderne, cuisine variée).</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="day-section" id="jour12">
+            <div class="section-header">
+                <h2>Jour 12 : Mercredi 20 août - Sensations fortes ou détente</h2>
+                <span class="toggle-icon">+</span>
+            </div>
+            <div class="section-content">
+                <ul class="activity-list">
+                    <li><strong>Matin :</strong> Choisissez votre activité !
+                        <ul>
+                            <li>**Option Aventure :** **Parapente** biplace (pour une vue imprenable sur les Aravis) ou **Via Ferrata** (encadrée).</li>
+                            <li>**Option Douce :** Séances de **yoga en montagne**, ou découverte de l'**Espace Aquatique** de La Clusaz (piscine intérieure/extérieure, bien-être).</li>
+                        </ul>
+                    </li>
+                    <li><strong>Midi :</strong> Déjeuner rapide en fonction de votre activité.</li>
+                    <li><strong>Après-midi :</strong> Détente après les efforts ou continuation de l'activité choisie.</li>
+                    <li><strong>Soir :</strong> Dîner au **Restaurant le Vieux Chalet** (ambiance traditionnelle, plats savoyards).</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="day-section" id="jour13">
+            <div class="section-header">
+                <h2>Jour 13 : Jeudi 21 août - Randonnée alpine au Col des Aravis</h2>
+                <span class="toggle-icon">+</span>
+            </div>
+            <div class="section-content">
+                <ul class="activity-list">
+                    <li><strong>Matin :</strong> Randonnée vers le **Col des Aravis** (accès en voiture possible) ou une randonnée depuis La Clusaz offrant des vues spectaculaires sur la Chaîne des Aravis et le Mont-Blanc. De nombreuses options existent, renseignez-vous auprès de l'Office de Tourisme.</li>
+                    <li><strong>Midi :</strong> Pique-nique en montagne ou déjeuner dans une auberge de col.</li>
+                    <li><strong>Après-midi :</strong> Retour à La Clusaz, flânerie dans les boutiques ou détente au spa de votre hébergement si disponible.</li>
+                    <li><strong>Soir :</strong> Dîner à **La Ferme** (restaurant emblématique de La Clusaz, cuisine du terroir).</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="day-section" id="jour14">
+            <div class="section-header">
+                <h2>Jour 14 : Vendredi 22 août - Journée libre / Dernière immersion</h2>
+                <span class="toggle-icon">+</span>
+            </div>
+            <div class="section-content">
+                <ul class="activity-list">
+                    <li><strong>Journée :</strong> Journée libre pour profiter une dernière fois de vos activités préférées ou découvrir un aspect de La Clusaz que vous n'avez pas encore exploré :
+                        <ul>
+                            <li>Re-randonnée un sentier coup de cœur.</li>
+                            <li>Initiation à l'escalade ou via ferrata.</li>
+                            <li>VTT de descente pour les plus sportifs.</li>
+                            <li>Détente au bord de la piscine.</li>
+                            <li>Achats de souvenirs et produits locaux.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Soir :</strong> Dîner d'adieu dans le restaurant de votre choix, ou pourquoi pas une fondue/raclette !</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="day-section" id="jour15">
+            <div class="section-header">
+                <h2>Jour 15 : Samedi 23 août - Route vers Génolhac et installation</h2>
+                <span class="toggle-icon">+</span>
+            </div>
+            <div class="section-content">
+                <ul class="activity-list">
+                    <li><strong>Matin :</strong> Petit-déjeuner et départ de La Clusaz.</li>
+                    <li><strong>Midi :</strong> Déjeuner en route (voir section Trajets).</li>
+                    <li><strong>Après-midi :</strong> Arrivée à **Génolhac** dans les Cévennes, installation à votre hébergement.</li>
+                    <li><strong>Fin d'après-midi :</strong> Première immersion dans l'ambiance cévenole, découverte du village et de ses ruelles.</li>
+                    <li><strong>Soir :</strong> Dîner à **L'Auberge de la Tour** (cuisine locale, ambiance conviviale).</li>
+                </ul>
+            </div>
+        </section>
+
+        ---
+
+        <h1 id="genolhac" style="text-align: center; font-family: 'Playfair Display', serif; color: #2c3e50; margin-top: 30px; border-bottom: 2px solid #a8dadc; padding-bottom: 10px;">Semaine 3 : Génolhac (Cévennes)</h1>
+
+        <section class="day-section" id="jour16">
+            <div class="section-header">
+                <h2>Jour 16 : Dimanche 24 août - Randonnée et baignade en rivière</h2>
+                <span class="toggle-icon">+</span>
+            </div>
+            <div class="section-content">
+                <ul class="activity-list">
+                    <li><strong>Matin :</strong> Randonnée sur les sentiers cévenols. Par exemple, le circuit des **Caves de Fustugères** ou une portion du GR70 (Chemin de Stevenson) qui passe à proximité.</li>
+                    <li><strong>Midi :</strong> Pique-nique au bord de la rivière ou déjeuner simple à Génolhac.</li>
+                    <li><strong>Après-midi :</strong> Baignade et détente dans une des nombreuses **rivières et "gours"** (petits bassins naturels) de la région, comme le Gardon de Mialet ou le Luech.</li>
+                    <li><strong>Soir :</strong> Dégustation de produits locaux au marché de Génolhac (si un marché a lieu le dimanche soir, à vérifier) ou dîner à votre hébergement/restaurant local.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="day-section" id="jour17">
+            <div class="section-header">
+                <h2>Jour 17 : Lundi 25 août - Découverte des villages de caractère</h2>
+                <span class="toggle-icon">+</span>
+            </div>
+            <div class="section-content">
+                <ul class="activity-list">
+                    <li><strong>Matin :</strong> Visite de **La Garde-Guérin** (village médiéval fortifié, classé Plus Beaux Villages de France) ou de **Villefort** et son lac.</li>
+                    <li><strong>Midi :</strong> Déjeuner dans un de ces villages.</li>
+                    <li><strong>Après-midi :</strong> Exploration des environs de **Chambon** et des paysages cévenols typiques, avec ses terrasses et châtaigniers.</li>
+                    <li><strong>Soir :</strong> Dîner au **Restaurant du Pont de Rastel** (cadre agréable au bord de l'eau, près de Génolhac).</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="day-section" id="jour18">
+            <div class="section-header">
+                <h2>Jour 18 : Mardi 26 août - Mines et histoire des Cévennes</h2>
+                <span class="toggle-icon">+</span>
+            </div>
+            <div class="section-content">
+                <ul class="activity-list">
+                    <li><strong>Matin :</strong> Visite du **Musée des Vallées Cévenoles** à Saint-Jean-du-Gard ou le **Musée du Désert** à Mialet (pour l'histoire du protestantisme cévenol). Alternative : la **Maison Rouge, Musée des Vallées Cévenoles** à St-Jean-du-Gard pour la culture cévenole.</li>
+                    <li><strong>Midi :</strong> Déjeuner dans les environs.</li>
+                    <li><strong>Après-midi :</strong> Plongée dans l'histoire minière avec la visite du **Parc des Cévennes** à La Grand-Combe (ancien site minier reconverti) ou une balade sur les traces des cheminées de fées de la **corniche des Cévennes**.</li>
+                    <li><strong>Soir :</strong> Dîner et soirée reposante à Génolhac.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="day-section" id="jour19">
+            <div class="section-header">
+                <h2>Jour 19 : Mercredi 27 août - Train à vapeur des Cévennes et Anduze</h2>
+                <span class="toggle-icon">+</span>
+            </div>
+            <div class="section-content">
+                <ul class="activity-list">
+                    <li><strong>Matin :</strong> Prenez le **Train à vapeur des Cévennes** depuis Saint-Jean-du-Gard ou Anduze. Un voyage pittoresque à travers les paysages.</li>
+                    <li><strong>Midi :</strong> Déjeuner à **Anduze**, réputée pour ses poteries (vase d'Anduze).</li>
+                    <li><strong>Après-midi :</strong> Visite de la **Bambouseraie de Prafrance** près d'Anduze (un jardin exotique unique en Europe).</li>
+                    <li><strong>Soir :</strong> Retour à Génolhac. Dîner au **Restaurant l'Escale Cévenole** (simple et efficace).</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="day-section" id="jour20">
+            <div class="section-header">
+                <h2>Jour 20 : Jeudi 28 août - Aventure souterraine ou accrobranche</h2>
+                <span class="toggle-icon">+</span>
+            </div>
+            <div class="section-content">
+                <ul class="activity-list">
+                    <li><strong>Matin :</strong> Choisissez votre activité !
+                        <ul>
+                            <li>**Option 1 (Souterraine) :** Exploration de l'**Aven Armand** (une grotte magnifique) ou de la **Grotte de Trabuc** et ses "cents mille soldats".</li>
+                            <li>**Option 2 (Accrobranche) :** Parcours aventure dans les arbres à proximité, comme à Accrobranche Génolhac ou dans un parc aux alentours.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Midi :</strong> Pique-nique ou déjeuner sur le pouce.</li>
+                    <li><strong>Après-midi :</strong> Détente ou baignade en rivière.</li>
+                    <li><strong>Soir :</strong> Dîner à Génolhac, peut-être pour goûter la cuisine cévenole.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="day-section" id="jour21">
+            <div class="section-header">
+                <h2>Jour 21 : Vendredi 29 août - Journée libre / Détente finale</h2>
+                <span class="toggle-icon">+</span>
+            </div>
+            <div class="section-content">
+                <ul class="activity-list">
+                    <li><strong>Journée :</strong> Profitez d'une journée libre pour :
+                        <ul>
+                            <li>Refaire une randonnée que vous avez aimée.</li>
+                            <li>Explorer un village voisin.</li>
+                            <li>Profiter d'une dernière baignade en rivière.</li>
+                            <li>Faire des achats de produits locaux (miel de châtaignier, confitures, oignons doux des Cévennes).</li>
+                        </ul>
+                    </li>
+                    <li><strong>Soir :</strong> Dîner d'adieu dans un restaurant coup de cœur de la région, ou pourquoi pas un barbecue si votre hébergement le permet.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="day-section" id="jour22">
+            <div class="section-header">
+                <h2>Jour 22 : Samedi 30 août - Découverte locale ou marché</h2>
+                <span class="toggle-icon">+</span>
+            </div>
+            <div class="section-content">
+                <ul class="activity-list">
+                    <li><strong>Matin :</strong> Visite d'un marché local si disponible ce jour-là (vérifiez les jours de marché à Génolhac ou dans les villages voisins) pour acheter des produits du terroir avant de partir. Alternativement, une dernière petite balade autour du village.</li>
+                    <li><strong>Midi :</strong> Déjeuner léger à Génolhac.</li>
+                    <li><strong>Après-midi :</strong> Préparation des bagages et derniers moments de détente.</li>
+                    <li><strong>Soir :</strong> Dîner simple et reposant à Génolhac pour votre dernière soirée.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="day-section" id="jour23">
+            <div class="section-header">
+                <h2>Jour 23 : Dimanche 31 août - Départ de Génolhac</h2>
+                <span class="toggle-icon">+</span>
+            </div>
+            <div class="section-content">
+                <ul class="activity-list">
+                    <li><strong>Matin :</strong> Petit-déjeuner et départ de Génolhac, la tête pleine de souvenirs de vos trois semaines de vacances !</li>
+                </ul>
+            </div>
+        </section>
+
+        ---
+
+        <section class="list-section" id="vetements">
+            <div class="section-header">
+                <h2>Vêtements à prévoir 👕</h2>
+                <span class="toggle-icon">+</span>
+            </div>
+            <div class="section-content">
+                <ul class="clothing-list">
+                    <li>Maillots de bain (plusieurs) - **indispensables pour les rivières cévenoles !**</li>
+                    <li>Shorts et T-shirts (matière respirante pour les activités)</li>
+                    <li>Pantalons légers (coton, lin) et un pantalon de randonnée plus robuste</li>
+                    <li>Vêtements chauds pour le soir (pull, gilet, polaire - les soirées en montagne et en Cévennes peuvent être fraîches)</li>
+                    <li>Veste imperméable ou K-Way (pour les averses)</li>
+                    <li>Sous-vêtements et chaussettes (suffisamment pour 23 jours)</li>
+                    <li>Pyjama</li>
+                    <li>Chapeau ou casquette</li>
+                    <li>Lunettes de soleil</li>
+                    <li>Tenues pour les restaurants (plus habillées si besoin)</li>
+                    <li>**Vêtements longs légers pour vous protéger du soleil et des insectes**</li>
+                </ul>
+            </div>
+        </section>
+
+        ---
+
+        <section class="list-section" id="equipement">
+            <div class="section-header">
+                <h2>Équipement essentiel 🎒</h2>
+                <span class="toggle-icon">+</span>
+            </div>
+            <div class="section-content">
+                <ul class="equipment-list">
+                    <li>Chaussures de randonnée confortables et déjà faites (indispensable !)</li>
+                    <li>Sandales ou tongs pour la plage et le bord du lac/rivière</li>
+                    <li>**Chaussures d'eau ou vieilles baskets pour la baignade en rivière (pour les cailloux)**</li>
+                    <li>Serviettes de bain / serviettes de plage</li>
+                    <li>Crème solaire (indice élevé, y compris pour les lèvres)</li>
+                    <li>Après-soleil</li>
+                    <li>Anti-moustiques (**très recommandé pour les Cévennes !**)</li>
+                    <li>Petite trousse de secours complète (pansements ampoules, désinfectant, antidouleur, anti-histaminique...)</li>
+                    <li>Petits sacs à dos (pour les randonnées et sorties à la journée)</li>
+                    <li>Bouteilles d'eau réutilisables / gourdes (au moins 1.5L par personne pour la rando)</li>
+                    <li>Bâtons de randonnée (très recommandés en montagne et pour certains terrains cévenols)</li>
+                    <li>Appareil photo</li>
+                    <li>Chargeurs de téléphone et autres appareils</li>
+                    <li>Brosse à dents, dentifrice, shampoing, gel douche...</li>
+                    <li>Kit de couture miniature</li>
+                    <li>Couteau suisse (utile pour pique-niques, etc.)</li>
+                    <li>Jeu de cartes ou livre pour les moments de détente</li>
+                    <li>Sac étanche (pour les activités nautiques à Chorges et les baignades en rivière)</li>
+                    <li>Carte IGN de la région et boussole (ou application GPS fiable sur smartphone)</li>
+                    <li>Petite lampe frontale ou de poche (utile pour les grottes ou balades nocturnes)</li>
+                    <li>**Petit sac à linge sale**</li>
+                </ul>
+            </div>
+        </section>
+
+        ---
+
+        <section class="list-section" id="todo">
+            <div class="section-header">
+                <h2>Boîte à To-Do avant le départ ✅</h2>
+                <span class="toggle-icon">+</span>
+            </div>
+            <div class="section-content">
+                <ul class="todo-list">
+                    <li><input type="checkbox" id="todo1"><label for="todo1">Vérifier les réservations d'hébergement (Chorges, La Clusaz et Génolhac)</label></li>
+                    <li><input type="checkbox" id="todo2"><label for="todo2">Rechercher les sites web/menus des restaurants pour réserver (dans les 3 régions)</label></li>
+                    <li><input type="checkbox" id="todo3"><label for="todo3">Télécharger des cartes de randonnées hors ligne (des 3 régions)</label></li>
+                    <li><input type="checkbox" id="todo4"><label for="todo4">Vérifier l'ouverture des attractions (Musées, Maison du Lac, remontées mécaniques, grottes...)</label></li>
+                    <li><input type="checkbox" id="todo5"><label for="todo5">Faire le plein de la voiture ou vérifier les transports</label></li>
+                    <li><input type="checkbox" id="todo6"><label for="todo6">Préparer une trousse de médicaments de base et spécifique à la montagne/rivière</label></li>
+                    <li><input type="checkbox" id="todo7"><label for="todo7">Prévenir les proches de votre départ (avec itinéraire et contacts)</label></li>
+                    <li><input type="checkbox" id="todo8"><label for="todo8">Organiser la garde des animaux / arrosage des plantes si besoin</label></li>
+                    <li><input type="checkbox" id="todo9"><label for="todo9">Vérifier la validité des papiers d'identité</label></li>
+                    <li><input type="checkbox" id="todo10"><label for="todo10">Préparer des playlists pour les longs trajets</label></li>
+                    <li><input type="checkbox" id="todo11"><label for="todo11">Vérifier l'état de vos chaussures de randonnée et des chaussures d'eau</label></li>
+                    <li><input type="checkbox" id="todo12"><label for="todo12">Se renseigner sur la Carte d'Hôte de La Clusaz (avantages sur les activités)</label></li>
+                    <li><input type="checkbox" id="todo13"><label for="todo13">Télécharger des applications utiles (météo, GPS rando, infos tourisme)</label></li>
+                </ul>
+            </div>
+        </section>
+
+        ---
+
+        <section class="travel-section" id="trajets">
+            <div class="section-header">
+                <h2>Informations sur les trajets 🚗</h2>
+                <span class="toggle-icon">+</span>
+            </div>
+            <div class="section-content">
+                <ul class="travel-details">
+                    <li><strong>Trajet 1 : Charvieu-Chavagneux (38) vers Chorges (05)</strong>
+                        <ul>
+                            <li>**Distance estimée :** Environ 170-190 km (selon l'itinéraire exact).</li>
+                            <li>**Durée estimée :** Environ 2h15 à 2h45 (hors pauses et selon le trafic).</li>
+                            <li>**Itinéraire possible :** Principalement par l'A43 puis la N85 (Route Napoléon) ou d'autres routes départementales et nationales via Grenoble et le col du Bayard. Pensez aux péages si vous empruntez l'autoroute.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Trajet 2 : Chorges (05) vers La Clusaz (74)</strong>
+                        <ul>
+                            <li>**Distance estimée :** Environ 200-220 km (selon l'itinéraire exact et les cols empruntés).</li>
+                            <li>**Durée estimée :** Environ 3h00 à 3h45 (hors pauses et selon le trafic/cols).</li>
+                            <li>**Itinéraire possible :** Vous traverserez une partie des Alpes. Un itinéraire classique pourrait passer par Gap, Grenoble, puis remonter vers Annecy avant de rejoindre La Clusaz. Attention, les routes de montagne peuvent être sinueuses.</li>
+                            <li>**Conseil :** Vérifiez l'état des routes et des cols de montagne (par exemple, col de la Forclaz pour une vue sur le lac d'Annecy, ou via Annecy directement), surtout si vous voyagez en fin de saison ou si la météo est capricieuse. Prévoyez une pause déjeuner en route.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Trajet 3 : La Clusaz (74) vers Génolhac (30)</strong>
+                        <ul>
+                            <li>**Distance estimée :** Environ 320-350 km.</li>
+                            <li>**Durée estimée :** Environ 4h30 à 5h30 (hors pauses). C'est le plus long trajet.</li>
+                            <li>**Itinéraire possible :** Vous traverserez une bonne partie de la France, en descendant du Massif des Aravis vers le sud. Il faudra probablement emprunter des autoroutes (A41, A7...) puis des routes nationales/départementales en approchant des Cévennes. Le paysage changera radicalement !</li>
+                            <li>**Conseil :** Prévoyez une ou deux pauses bien-être. C'est un long trajet, donc partez tôt le matin pour arriver l'après-midi et avoir le temps de vous installer tranquillement.</li>
+                        </ul>
+                    </li>
+                </ul>
+                <div class="note">
+                    <p><strong>Important :</strong> Ces estimations sont indicatives. Utilisez un GPS ou une application de navigation (comme Google Maps, Waze) le jour de votre départ pour des informations en temps réel sur le trafic, les conditions routières et les temps de parcours précis.</p>
+                </div>
+            </div>
+        </section>
+
+        ---
+
+        <section class="day-section" id="conseils">
+            <div class="section-header">
+                <h2>Conseils supplémentaires pour votre séjour :</h2>
+                <span class="toggle-icon">+</span>
+            </div>
+            <div class="section-content">
+                <div class="note">
+                    <p><strong>Réservations :</strong> En août, c'est la pleine saison partout. Pensez à **réserver vos hébergements, vos restaurants** et éventuellement vos activités à l'avance, surtout pour les activités encadrées (rafting, parapente, canyoning, visites de grottes).</p>
+                    <p><strong>Météo :</strong> La météo en montagne peut changer très vite. Prévoyez des couches de vêtements (système des "3 couches" : sous-vêtement technique, polaire, veste imperméable/coupe-vent) pour vous adapter. Dans les Cévennes, il fera probablement plus chaud, mais les orages peuvent être violents. Restez informé sur la météo locale.</p>
+                    <p><strong>Hydratation et alimentation :</strong> Buvez régulièrement et emportez des snacks énergétiques (barres de céréales, fruits secs) lors de vos activités. La déshydratation est plus rapide en altitude et par forte chaleur.</p>
+                    <p><strong>Sécurité en montagne et en rivière :</strong> Ne surestimez jamais vos capacités. Renseignez-vous sur les conditions des sentiers et rivières auprès des Offices de Tourisme ou des professionnels. Partez toujours avec de l'eau, une carte, un téléphone chargé et informez quelqu'un de votre itinéraire. Soyez vigilant aux crues subites dans les rivières cévenoles en cas d'orage.</p>
+                    <p><strong>Transports :</strong> Une voiture est fortement recommandée pour explorer les régions de Chorges, des Aravis et des Cévennes, car les transports en commun sont moins développés pour accéder aux départs de randonnées ou aux villages isolés.</p>
+                    <p><strong>Offices de Tourisme :</strong> N'hésitez pas à vous rendre aux **Offices de Tourisme locaux** (Chorges, Embrun, La Clusaz, Grand-Bornand, Génolhac, Villefort, Anduze...) dès votre arrivée pour obtenir des informations actualisées, des cartes de randonnées, des brochures sur les événements locaux et des conseils personnalisés.</p>
+                    <p><strong>La Clusaz Pass/Carte d'Hôte :</strong> Renseignez-vous auprès de votre hébergeur à La Clusaz, beaucoup d'entre eux offrent une "Carte d'Hôte" qui donne accès à des réductions ou gratuités sur les remontées mécaniques, l'espace aquatique et certaines activités.</p>
+                    <p><strong>Produits locaux :</strong> Profitez de chaque région pour découvrir ses spécialités ! Fromages dans les Alpes, fruits et produits du lac à Chorges, et dans les Cévennes : oignons doux, châtaignes, miel, cèpes (si la saison est propice).</p>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <footer>
+        <p>&copy; 2025 - Mes Vacances en France. Tous droits réservés.</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Toggle pour le menu de navigation mobile
+            const menuToggle = document.querySelector('.menu-toggle');
+            const mainNav = document.getElementById('main-nav');
+
+            menuToggle.addEventListener('click', function() {
+                mainNav.classList.toggle('active');
+            });
+
+            // Ferme le menu si un lien est cliqué (utile pour les single-page apps)
+            mainNav.querySelectorAll('a').forEach(link => {
+                link.addEventListener('click', () => {
+                    if (mainNav.classList.contains('active')) {
+                        mainNav.classList.remove('active');
+                    }
+                });
+            });
+
+            // Fonction pour déplier/replier toutes les sections
+            function toggleAllSections(expand) {
+                document.querySelectorAll('.section-content').forEach(content => {
+                    const icon = content.previousElementSibling.querySelector('.toggle-icon');
+                    if (expand) {
+                        content.classList.remove('collapsed');
+                        icon.textContent = '-';
+                    } else {
+                        content.classList.add('collapsed');
+                        icon.textContent = '+';
+                    }
+                });
+            }
+
+            // Écouteurs d'événements pour les boutons "Tout déplier" et "Tout replier"
+            document.getElementById('expandAll').addEventListener('click', function() {
+                toggleAllSections(true);
+            });
+
+            document.getElementById('collapseAll').addEventListener('click', function() {
+                toggleAllSections(false);
+            });
+
+            // Toggle pour chaque section (rendre le contenu réductible)
+            document.querySelectorAll('.section-header').forEach(header => {
+                header.addEventListener('click', function() {
+                    const content = this.nextElementSibling; // Le contenu est juste après l'en-tête
+                    const icon = this.querySelector('.toggle-icon');
+
+                    content.classList.toggle('collapsed'); // Ajoute/retire la classe 'collapsed'
+                    if (content.classList.contains('collapsed')) {
+                        icon.textContent = '+'; // Change l'icône en '+' si c'est replié
+                    } else {
+                        icon.textContent = '-'; // Change l'icône en '-' si c'est déplié
+                    }
+                });
+            });
+            
+            // Replier toutes les sections par défaut au chargement de la page
+            document.querySelectorAll('.section-content').forEach(content => {
+                content.classList.add('collapsed');
+            });
+            // Assurez-vous que les icônes correspondent à l'état replié par défaut
+            document.querySelectorAll('.toggle-icon').forEach(icon => {
+                icon.textContent = '+';
+            });
+        });
+    </script>
+</body>
+</html>
